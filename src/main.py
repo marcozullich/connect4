@@ -1,3 +1,4 @@
+from nn.network import Network
 from tournament import Tournament
 from random_strategy import RandomStrategy
 from nn.nn_strategy import NnStrategy
@@ -7,6 +8,7 @@ from nn.network_64x2_64x2_64x2_64 import NetworkC
 from nn.network_64x4_64x2_64x2_64 import NetworkD
 from nn.network_256x4_64_64 import NetworkE
 from nn.network_b_ensemble import NetworkBEnsemble
+from nn.network_mlp import MLP
 from nn.nn_minimax_strategy import NnMiniMaxStrategy
 from mcts.mcts_strategy import MctsStrategy
 from player import Player
@@ -69,7 +71,9 @@ def log(msg):
 
 def self_play_group(count):
     global tournament
-    networks = [NetworkB(i+1) for i in range(count)]
+    #networks = [NetworkB(i+1) for i in range(count)]
+    # networks = [NetworkA(), NetworkC()]
+    networks = [MLP(), NetworkA()]
     strategies = [NnStrategy(n, get_exploration_factor) for n in networks]
     players = [Player('B' + str(i), s) for i,s in enumerate(strategies)]
 
@@ -95,24 +99,24 @@ def self_play_group(count):
         print('- - - - - - - - - -')
 
 
-# self_play_group(3)
+self_play_group(2)
 
-def test_ensemble():
-    p1 = Player('N', NnStrategy(NetworkBEnsemble('N')))
-    p2 = Player('X', MctsStrategy(1000))
-    tournament = Tournament(100, [p2, p1])
-    result = tournament.run(False, lambda r: print('.', end='', flush=True))
-    print(result)
+# def test_ensemble():
+#     p1 = Player('N', NnStrategy(NetworkBEnsemble('N')))
+#     p2 = Player('X', MctsStrategy(1000))
+#     tournament = Tournament(100, [p2, p1])
+#     result = tournament.run(False, lambda r: print('.', end='', flush=True))
+#     print(result)
 
-# test_ensemble()
+# # test_ensemble()
 
-def test_minimax(lookahead_limit):
-    mms = NnMiniMaxStrategy(NetworkBEnsemble('N'), lookahead_limit, ['N', 'X'])
-    p1 = Player('N', mms)
-    p2 = Player('X', MctsStrategy(1000))
-    tournament = Tournament(100, [p2, p1])
-    result = tournament.run(False, lambda r: print('.', end='', flush=True))
-    print(' ')
-    print(lookahead_limit, result, mms.average_move_time(),flush=True)
+# def test_minimax(lookahead_limit):
+#     mms = NnMiniMaxStrategy(NetworkBEnsemble('N'), lookahead_limit, ['N', 'X'])
+#     p1 = Player('N', mms)
+#     p2 = Player('X', MctsStrategy(1000))
+#     tournament = Tournament(100, [p2, p1])
+#     result = tournament.run(False, lambda r: print('.', end='', flush=True))
+#     print(' ')
+#     print(lookahead_limit, result, mms.average_move_time(),flush=True)
 
-[test_minimax(n) for n in range(0,5)]
+# [test_minimax(n) for n in range(0,5)]
